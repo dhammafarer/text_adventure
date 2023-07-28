@@ -1,4 +1,5 @@
 #include "noun.h"
+#include "misc.h"
 #include "object.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -27,7 +28,10 @@ OBJECT *getVisible(const char *intention, const char *noun) {
   } else if (!(obj == player || obj == player->location ||
                obj->location == player || obj->location == player->location ||
                obj->location == NULL || obj->location->location == player ||
-               obj->location->location == player->location)) {
+               getPassage(player->location, obj) != NULL ||
+               (obj->location != NULL &&
+                (obj->location->location == player ||
+                 obj->location->location == player->location)))) {
     printf("You don't see any %s here.\n", noun);
     obj = NULL;
   }
@@ -38,7 +42,7 @@ OBJECT *getPossession(OBJECT *from, const char *verb, const char *noun) {
   OBJECT *obj = NULL;
 
   if (from == NULL) {
-    printf("I don't undertand who you want to %s.\n", verb);
+    printf("I don't understand who you want to %s.\n", verb);
   } else if ((obj = getObject(noun)) == NULL) {
     printf("I don't understant whath you want to %s.\n", verb);
   } else if (obj == from) {
